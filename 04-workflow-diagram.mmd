@@ -1,0 +1,32 @@
+flowchart TD
+    TITLE["CURRENT STATE — Xanh SM: xử lý báo pin thấp<br/>Quy trình và thời gian giả định; chưa xác minh thực địa"]
+    DRIVER["Tài xế báo pin thấp<br/>Input: lời báo / tin nhắn"]
+    A["1. Điều phối viên tiếp nhận và lập hồ sơ<br/>2 phút — Output: hồ sơ ca"]
+    B["2. Điều phối viên xác minh pin, vị trí, loại xe<br/>2 phút — Output: dữ kiện được kiểm tra"]
+    Q{"Đủ dữ kiện?"}
+    ASK["Hỏi lại tài xế<br/>Thời gian biến thiên, chưa tính vào 15 phút"]
+    C["3. BOTTLENECK B1: tra cứu và đối chiếu trạm<br/>5 phút — Output: trạm phù hợp hoặc không có phương án"]
+    DATA[("Nguồn thông tin trạm<br/>Độ mới / tương thích / khả dụng cần xác minh")]
+    D["4. BOTTLENECK B2: soạn và kiểm tra thông điệp<br/>5 phút — Output: phương án đã kiểm tra"]
+    E{"Cần hỗ trợ tại chỗ?"}
+    F["5a. Gửi thông tin đã kiểm tra, xác nhận tài xế tiếp nhận<br/>1 phút"]
+    G["5b. Liên hệ đầu mối hỗ trợ, xác nhận tiếp nhận ca<br/>1 phút"]
+    END["Kết thúc phạm vi đo: phương án được tiếp nhận<br/>Đường đi danh nghĩa: 2 + 2 + 5 + 5 + 1 = 15 phút/ca<br/>Chưa gồm hỏi lại, thời gian chờ và thời gian hỗ trợ tới nơi"]
+
+    TITLE --> DRIVER
+    DRIVER -->|"HANDOFF H1: tài xế → điều phối viên"| A
+    A --> B --> Q
+    Q -->|"Không"| ASK
+    ASK -->|"HANDOFF: tài xế bổ sung dữ kiện"| B
+    Q -->|"Có"| C
+    C <-->|"HANDOFF H2: yêu cầu / dữ liệu trạm"| DATA
+    C --> D --> E
+    E -->|"Không"| F
+    E -->|"Có"| G
+    F -->|"HANDOFF H3a: điều phối viên → tài xế"| END
+    G -->|"HANDOFF H3b: điều phối viên → đầu mối hỗ trợ"| END
+
+    classDef bottleneck fill:#fee2e2,stroke:#b91c1c,stroke-width:3px,color:#7f1d1d;
+    classDef handoff fill:#dbeafe,stroke:#2563eb,color:#172554;
+    class C,D bottleneck;
+    class DRIVER,DATA,F,G handoff;
